@@ -61,7 +61,9 @@ def build_request(brief: RecipeBrief, correction_feedback: str = "") -> tuple[st
     if correction_feedback:
         user += f"\n\nCORRECTION REQUIRED:\n{correction_feedback}"
 
-    return system, user, 4096, 8000
+    # A full recipe JSON (ingredients + up to 7 steps + prose) is long, and Gemini's dynamic
+    # thinking shares this budget — keep max_tokens generous so the draft doesn't truncate mid-JSON.
+    return system, user, 8192, 8000
 
 
 def parse_response(raw: str, brief: RecipeBrief) -> RecipeDraft:

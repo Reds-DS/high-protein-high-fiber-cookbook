@@ -17,7 +17,10 @@ each recipe fits on one page. One bad recipe can cost the reader's trust in the 
 ABSOLUTE RULES — ANTI-HALLUCINATION:
 1. This recipe is for EXACTLY 2 people. Quantities must be GENEROUS and SATISFYING for 2 full \
    servings — the reader should not be hungry afterward or prone to snacking. Do not write a \
-   4-person recipe and mentally halve it.
+   4-person recipe and mentally halve it. Reach the >=30 g protein floor with SENSIBLE portions — a \
+   normal single-protein serving (about 120-180 g cooked per person) or two complementary sources \
+   already clears it; do NOT stack several large protein sources to over-shoot. Keep total \
+   protein-rich ingredients under about 350 g per serving (more reads as a 4-person recipe).
 2. Every ingredient needs an EXACT amount in grams (quantity_g) AND a human-readable display \
    (quantity_display). Vague amounts are FORBIDDEN: "a little", "a few", "to taste", "generously".
 3. The recipe's nutrition will be computed later from the USDA FoodData Central database — do not \
