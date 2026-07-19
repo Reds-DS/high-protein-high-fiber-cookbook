@@ -14,7 +14,12 @@ was removed when the codebase was repurposed for the high-protein high-fiber boo
 
 All four feed the orchestrator's aggregate ``validation_warnings`` and the ``cooking`` log entry.
 """
-from src.cooking.method_checker import check_cooking_method, check_grain_base, check_super_easy
+from src.cooking.method_checker import (
+    check_cooking_method,
+    check_everyday_ingredients,
+    check_grain_base,
+    check_super_easy,
+)
 from src.cooking.quantity_checker import check_quantities
 from src.models.recipe import RecipeDraft
 
@@ -29,10 +34,12 @@ def run(draft: RecipeDraft) -> tuple[RecipeDraft, list[str], list[str]]:
     method_result = check_cooking_method(draft)
     easy_result = check_super_easy(draft)
     grain_result = check_grain_base(draft)
+    ingredient_result = check_everyday_ingredients(draft)
     warnings = [
         *qty_result.warnings,
         *method_result.warnings,
         *easy_result.warnings,
         *grain_result.warnings,
+        *ingredient_result.warnings,
     ]
     return draft, warnings, []

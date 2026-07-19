@@ -16,6 +16,15 @@ NON-NEGOTIABLE RULES:
   But cap canned/jarred items at about ONE (two max) per recipe and pair them with a fresh or frozen \
   anchor: stacking several canned/cured items blows the sodium ceiling. One-pan / sheet-pan / skillet \
   / one-bowl / no-cook and meal-prep-friendly formats are welcome.
+- EVERYDAY INGREDIENTS (easy to find): every ingredient must be stocked at any mainstream US \
+  supermarket (Walmart, Kroger, Safeway, Target, Publix) — NOTHING that needs a health-food, \
+  specialty, or international market. Avoid niche items such as nutritional yeast, protein powder, \
+  powdered peanut butter, coconut / liquid aminos, psyllium husk, vital wheat gluten, seitan, and \
+  specialty flours (lupin / teff / cassava); if a flavor needs one, use a common substitute (grated \
+  parmesan for nutritional yeast, regular soy sauce for aminos, natural peanut butter for the powder).
+- SIMPLE TO PREPARE: beginner-friendly techniques only — minimal chopping (lean on pre-cut / frozen \
+  produce), one or two cooking vessels, no fine knife work, no juggling several pans at once, no \
+  fussy multi-component builds.
 - HIGH IN PROTEIN + HIGH IN FIBER by design (this is the book's engine): a MAIN delivers ≥30 g \
   protein and ≥8 g fiber per serving; a snack ≥12 g protein and ≥3 g fiber; a dessert ≥8 g \
   protein and ≥3 g fiber. Build on lean, complete, leucine-rich proteins — skinless poultry, \

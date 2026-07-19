@@ -54,6 +54,14 @@ STYLE RULES — COMPACT COOKBOOK:
   "no-salt-added" or "low-sodium" AND "rinsed and drained"; specify "untreated / no salt added" shrimp, \
   scallops, and seafood (many are brined). Do NOT stack several full-salt canned or cured items in one recipe, \
   and don't build on cured/smoked fish or processed meat. Prefer fresh or frozen when it's just as easy.
+- EVERYDAY INGREDIENTS: every ingredient must be a common US supermarket staple (Walmart / Kroger / \
+  Target). Do NOT use health-food or specialty items — no nutritional yeast, protein powder, powdered \
+  peanut butter / PB2, coconut or liquid aminos, psyllium husk, vital wheat gluten, seitan, specialty \
+  flours (lupin / teff / cassava), or hard-to-source sauces. If a flavor needs one, substitute a common \
+  item (grated parmesan for nutritional yeast; regular soy sauce for aminos; natural peanut butter for \
+  the powder; whole-wheat or almond flour for niche flours).
+- SIMPLE PREP: keep it genuinely beginner-easy — minimal chopping (use pre-cut / frozen), one or two \
+  vessels, no fine knife work, no juggling several pans at once, no fussy multi-step sub-components.
 - TIMING: cook_time counts ONLY active heat time; a no-cook recipe (blend / mash / assemble / marinate / \
   chill) has cook_time 0, with the wait in passive_time (e.g. "Chill 30-45 min"). Blending, whisking, \
   marinating, resting, and chilling are NOT cooking.

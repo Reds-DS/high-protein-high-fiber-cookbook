@@ -66,6 +66,19 @@ _WHOLE_GRAIN_QUALIFIER_KW: tuple[str, ...] = (
 )
 
 
+# Health-food / specialty items a typical US shopper can't reliably find at a mainstream supermarket
+# (Walmart / Kroger / Target). Conservative + advisory only — the ideation/draft prompts steer away
+# and the LLM critic catches nuanced cases; this is a deterministic backstop. Extend as needed.
+_HARD_TO_FIND_KW: tuple[str, ...] = (
+    "nutritional yeast",
+    "coconut aminos", "liquid aminos",
+    "psyllium husk", "psyllium",
+    "vital wheat gluten", "seitan",
+    "lupin flour", "lupini", "teff", "cassava flour", "tigernut", "green banana flour",
+    "powdered peanut butter", "peanut butter powder", "pb2",
+)
+
+
 @dataclass
 class CookingMethodResult:
     warnings: list[str] = field(default_factory=list)
@@ -162,3 +175,21 @@ def check_grain_base(draft: RecipeDraft) -> CookingMethodResult:
         )
 
     return CookingMethodResult(warnings=warnings)
+
+
+def check_everyday_ingredients(draft: RecipeDraft) -> CookingMethodResult:
+    """Flag ingredients a typical US shopper can't easily find at a mainstream supermarket
+    (health-food / specialty items). Advisory only — a deterministic backstop for the common
+    offenders; the prompts steer away and the LLM critic handles the nuanced cases."""
+    hits = [
+        ing.name
+        for ing in draft.ingredients
+        if any(kw in (ing.name or "").lower() for kw in _HARD_TO_FIND_KW)
+    ]
+    if not hits:
+        return CookingMethodResult(warnings=[])
+    return CookingMethodResult(warnings=[
+        f"Hard-to-find ingredient(s): {', '.join(hits)} — health-food / specialty items many US "
+        f"shoppers can't easily source. Swap for a mainstream-supermarket staple (e.g. grated "
+        f"parmesan for nutritional yeast; soy sauce for aminos; natural peanut butter for the powder)."
+    ])

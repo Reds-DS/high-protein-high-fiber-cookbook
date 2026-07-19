@@ -142,7 +142,10 @@ qualitative guideline-fit those automated checks cannot see — the 12 dimension
    Quick and simple for a busy adult is the design lens. About 10 meaningful ingredients or fewer
    (salt, pepper, water, and a small amount of cooking oil don't count), about 30 minutes active or
    less, about 7 steps or fewer, only common home-kitchen equipment (stovetop, oven, blender — NO
-   air fryer), nothing hard to find or fussy. Frozen / canned / pre-cut produce, rotisserie chicken,
+   air fryer), and EVERY ingredient easy to find at a mainstream US supermarket (Walmart / Kroger /
+   Target). Flag health-food / specialty items — e.g. nutritional yeast, protein powder, powdered
+   peanut butter, coconut / liquid aminos, psyllium husk, vital wheat gluten, seitan, specialty flours
+   — unless a common substitute is used. Nothing fussy. Frozen / canned / pre-cut produce, rotisserie chicken,
    canned beans / salmon / tuna / sardines, sheet pan, and one-pot / one-bowl / no-cook formats are
    FIRST-CLASS — do not flag them as shortcuts to avoid. Recipes that require prolonged standing,
    fine knife work, many simultaneous burners, or specialty equipment work against the book's

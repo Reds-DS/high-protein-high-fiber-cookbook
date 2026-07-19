@@ -2,7 +2,7 @@
 import pytest
 from pydantic import ValidationError
 
-from src.cooking.method_checker import check_grain_base, check_super_easy
+from src.cooking.method_checker import check_everyday_ingredients, check_grain_base, check_super_easy
 from src.cooking.quantity_checker import _classify, build_correction_prompt, check_quantities
 from src.diet_rules import spec
 from src.llm.output_schemas import CriticDimensionVerdict, CriticOutput
@@ -314,6 +314,21 @@ class TestSuperEasyCheck:
 
     def test_clean_small_draft_has_no_warnings(self):
         assert check_super_easy(_make_draft()).warnings == []
+
+
+class TestEverydayIngredientsCheck:
+    @pytest.mark.parametrize("name", [
+        "nutritional yeast", "coconut aminos", "psyllium husk", "vital wheat gluten",
+        "seitan", "teff flour", "powdered peanut butter",
+    ])
+    def test_specialty_ingredient_flagged(self, name):
+        draft = _make_draft(ingredients=[_ing(name, 20), _ing("chicken breast", 300)])
+        warnings = check_everyday_ingredients(draft).warnings
+        assert warnings and name.split()[0] in warnings[0].lower()
+
+    def test_common_ingredients_pass(self):
+        # chicken + zucchini (the default draft) are supermarket staples
+        assert check_everyday_ingredients(_make_draft()).warnings == []
 
 
 class TestGrainBaseCheck:

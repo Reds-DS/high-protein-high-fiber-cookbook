@@ -404,6 +404,7 @@ easy_recipe_constraints:
   max_total_time_min: 45
   max_steps: 7
   equipment: "common home kitchen (stovetop, oven, blender); no air fryer; no specialty gear"
+  ingredient_accessibility: "every ingredient easy to find at a mainstream US supermarket (Walmart/Kroger/Target); no health-food, specialty, or international-market items; beginner-simple prep"
   formats_to_favor: [one-pan, sheet-pan, skillet, one-bowl, no-cook, meal-prep-friendly]
   exceptions_allowed: "a few longer set-and-forget slow-cooker/oven recipes are fine"
 
@@ -436,7 +437,10 @@ prompt_snippets:
     no refined-grain base (white bread/rice/pasta); the recipe is not essentially a sugar-delivery vehicle;
     not built on processed/cured meat; keep sodium under the ceiling — specify every canned/jarred item as
     "no-salt-added"/"low-sodium" and "rinsed", use untreated seafood, and don't stack multiple canned/cured
-    items; no air fryer (stovetop/oven/no-cook only). Report clear per-serving macros: Calories, Protein, Total Carbs,
+    items; no air fryer (stovetop/oven/no-cook only). Every ingredient must be easy to find at a mainstream US
+    supermarket (Walmart/Kroger/Target) — no health-food/specialty items (nutritional yeast, protein powder,
+    aminos, psyllium, vital wheat gluten, seitan, specialty flours), and keep prep beginner-simple. Report clear
+    per-serving macros: Calories, Protein, Total Carbs,
     Net Carbs (= total carbs - fiber), Fiber, Fat up front, plus the full FDA panel. Net carbs is a
     convenience number, not an FDA term. Favor plate method on mains: >=1/2 non-starchy vegetables,
     ~1/4-1/3 lean protein, <=1/4 quality carb.
