@@ -364,6 +364,16 @@ class TestQuantityClassify:
     def test_plain_vegetable_classifies_as_none(self):
         assert _classify(_ing("zucchini", 200)) is None
 
+    def test_no_salt_added_items_are_not_salt(self):
+        # "no-salt-added" / "salt-free" ingredients must not be misread as a salt source (the word
+        # "salt" is only a negation) — else the sodium-conscious naming trips the flat salt cap.
+        assert _classify(_ing("no-salt-added diced tomatoes", 200)) is None
+        assert _classify(_ing("salt-free roasted red peppers", 80)) is None
+        assert _classify(_ing("no-salt-added black beans", 150)) == "protein"  # beans match first
+        # real salt sources still classify
+        assert _classify(_ing("table salt", 5)) == "salt"
+        assert _classify(_ing("low-sodium soy sauce", 30)) == "salt"
+
 
 class TestQuantityCheck:
     def test_clean_default_draft_passes(self):

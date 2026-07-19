@@ -67,6 +67,11 @@ _PROTEIN_KEYWORDS = [
 ]
 _OIL_KEYWORDS = ["oil", "butter", "margarine"]   # also re-used by src/cooking/method_checker.py
 _SALT_KEYWORDS = ["salt", "soy sauce", "tamari", "miso"]
+_SALT_CONDIMENTS = ["soy sauce", "tamari", "miso"]  # a salt source even when "low-sodium"
+# "no-salt-added" / "low-salt" / "salt-free" items are NOT salt sources — "salt" appears only as a
+# negation. Guard the bare-"salt" match so the sodium-conscious "no-salt-added ..." naming the draft
+# prompt now requires isn't misread as a big dose of added salt.
+_NO_SALT_RE = re.compile(r"\b(?:no|low|reduced|less|without)[\s-]*salt\b|\bsalt[\s-]*free\b", re.I)
 
 
 @dataclass
@@ -93,7 +98,10 @@ def _classify(ingredient: Ingredient) -> str | None:
     if _has_word(name, _OIL_KEYWORDS):
         return "oil"
     if _has_word(name, _SALT_KEYWORDS):
-        return "salt"
+        # A salty condiment (soy sauce, miso, ...) always counts; a bare "salt" match on a
+        # "no-salt-added" / "salt-free" ingredient does NOT — the word is only a negation.
+        if _has_word(name, _SALT_CONDIMENTS) or not _NO_SALT_RE.search(name):
+            return "salt"
     return None
 
 
