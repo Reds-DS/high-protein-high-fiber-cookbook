@@ -1,0 +1,454 @@
+# High-Protein High-Fiber Weight-Loss Cookbook — machine-readable spec (single source of truth).
+# schema_version 1. Values distilled from docs/high_protein_high_fiber_guidelines.md.
+# Every quantitative claim references a `sources:` id resolved in the `sources:` block.
+# Loader-parsed sections (drive runtime): per_recipe_constraints.meal_categories + hard_blocks,
+#   recipe_categories, prompt_snippets.{ideation,drafting,critic}, cooking_methods.prefer/avoid.
+# Per-serving values are DERIVED (daily target / ~3 meals + 1-2 snacks) and flagged severity: soft
+#   unless a structural hard_block. Servings fixed at 2; per-serving = one person's per-meal portion.
+
+meta:
+  schema_version: 1
+  title: High-protein high-fiber weight-loss cookbook — recipe guidelines
+  book: "Super Easy & Complete High-Protein High-Fiber Cookbook for Weight Loss"
+  subtitle: "100+ Quick, Delicious Low-Carb Recipes with Clear Macros to Burn Fat, Build Muscle, and Boost Metabolism — 60-Day Personalized Meal Plan and APP Included"
+  description: >-
+    General healthy US adults who want to lose fat, preserve or build muscle, and stay full without
+    hunger. Every recipe is high-protein and high-fiber, moderate-low-carb (not keto), quick and simple,
+    with clear per-serving macros computed from USDA data. English; USDA FoodData Central nutrition.
+  companion_doc: "docs/high_protein_high_fiber_guidelines.md"
+  fixed_servings: 2
+  last_reviewed: "2026-07-08"
+  review_notes: >-
+    Numbers grounded in DGA 2020-2025, FDA Nutrition Facts / Daily Values (21 CFR 101.9 / 101.54),
+    IOM/NASEM DRIs, ISSN 2017 protein position stand, Academy of Nutrition & Dietetics fiber position,
+    and peer-reviewed reviews/RCTs; all headline numbers adversarially cross-checked against a second
+    authority. Nutrient-ID check (done 2026-07-19): USDA FDC nutrient IDs 1235 (added sugars = "Sugars,
+    added"), 1092 (potassium = "Potassium, K"), 1114 (vitamin D D2+D3 = "Vitamin D (D2 + D3)", mcg) were
+    verified present in the live nutrient.csv, so usda_loader NUTRIENT_RESOLUTION is correct. Still to
+    re-check before print: a DGA 2025-2030 edition released ~Jan 2026 leaves the three
+    headline limits (added sugar/sat fat/sodium) substantially unchanged, but re-check before print.
+    'Net carbs' is featured as a labeled convenience metric only — it is NOT an FDA/ADA term; the full
+    FDA panel with Total Carbohydrate + Dietary Fiber is always printed and medication users count total.
+
+sources:
+  - id: dga-2020-2025
+    name: "USDA & HHS. Dietary Guidelines for Americans, 2020-2025 (added sugars <10% kcal; saturated fat <10% kcal; sodium <2,300 mg/day; fiber 14 g/1,000 kcal; >=8 oz seafood/week; carbohydrate quality: whole grains, legumes, vegetables, fruit)."
+    url: "https://www.dietaryguidelines.gov/"
+    accessed: "2026-07-07"
+  - id: fda-daily-values
+    name: "FDA. Daily Value on the Nutrition and Supplement Facts Labels (fiber 28 g, protein 50 g, total carb 275 g, total fat 78 g, sat fat 20 g, added sugars 50 g, sodium 2,300 mg, cholesterol 300 mg, vitamin D 20 mcg, calcium 1,300 mg, iron 18 mg, potassium 4,700 mg; total sugars & trans fat carry no DV)."
+    url: "https://www.fda.gov/food/nutrition-facts-label/daily-value-nutrition-and-supplement-facts-labels"
+    accessed: "2026-07-07"
+  - id: fda-nutrition-facts-101-9
+    name: "FDA / eCFR 21 CFR 101.9. Nutrition labeling of food — mandatory Nutrition Facts declarations; Total Carbohydrate (with Dietary Fiber and Sugars beneath); 'net carbs' has no regulatory definition."
+    url: "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-A/section-101.9"
+    accessed: "2026-07-07"
+  - id: fda-nutrient-claims-101-54
+    name: "FDA / eCFR 21 CFR 101.54. Nutrient content claims: 'good source' 10-19% DV, 'high'/'excellent source' >=20% DV per RACC (=> 'high fiber' >=5.6 g, 'high protein' >=10 g per serving)."
+    url: "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-D/section-101.54"
+    accessed: "2026-07-07"
+  - id: iom-dri-protein
+    name: "IOM/NASEM. Dietary Reference Intakes — protein RDA 0.8 g/kg/day (deficiency floor, not optimum); AMDR 10-35% of energy."
+    url: "https://www.ncbi.nlm.nih.gov/books/NBK208874/"
+    accessed: "2026-07-07"
+  - id: iom-dri-fiber
+    name: "IOM/NASEM DRI for fiber — Adequate Intake 14 g/1,000 kcal (~38 g/day men, 25 g/day women under 50), summarized by Linus Pauling Institute / StatPearls."
+    url: "https://lpi.oregonstate.edu/mic/other-nutrients/fiber"
+    accessed: "2026-07-07"
+  - id: issn-protein-2017
+    name: "Jager R, et al. ISSN Position Stand: Protein and Exercise. J Int Soc Sports Nutr 2017. (1.4-2.0 g/kg/day builds/maintains muscle; 2.3-3.1 g/kg/day to retain lean mass in hypocaloric trained subjects; per-meal 0.25 g/kg or 20-40 g, 700-3000 mg leucine, every 3-4 h; 1.4-2.0 g/kg safe for kidney/bone in healthy adults)."
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5477153/"
+    accessed: "2026-07-07"
+  - id: acsm-acadnd-2016
+    name: "Academy of Nutrition and Dietetics, Dietitians of Canada, ACSM. Position: Nutrition and Athletic Performance, 2016. (Protein 1.2-2.0 g/kg/day for physically active adults.)"
+    url: "https://pubmed.ncbi.nlm.nih.gov/26920240/"
+    accessed: "2026-07-07"
+  - id: ajcn-leidy-protein
+    name: "Leidy HJ, et al. The role of protein in weight loss and maintenance. Am J Clin Nutr. (1.2-1.6 g/kg/day preserves lean mass, improves body composition and satiety during weight loss; ~25-30 g protein/meal satiety threshold; <25 g/meal shows no satiety effect.)"
+    url: "https://ajcn.nutrition.org/article/S0002-9165(23)27427-4/fulltext"
+    accessed: "2026-07-07"
+  - id: acadnd-fiber-2015
+    name: "Academy of Nutrition and Dietetics. Position: Health Implications of Dietary Fiber, 2015 (14 g/1,000 kcal; ~25 g/day women, 38 g/day men)."
+    url: "https://pubmed.ncbi.nlm.nih.gov/26514720/"
+    accessed: "2026-07-07"
+  - id: statpearls-lowcarb
+    name: "StatPearls (NIH/NCBI). Low-Carbohydrate Diet. (Carb tiers by %energy: moderate 26-44%; low <26% or <130 g/day; very-low/keto <10% or 20-50 g/day; normal AMDR 45-65%.)"
+    url: "https://www.ncbi.nlm.nih.gov/books/NBK537084/"
+    accessed: "2026-07-07"
+  - id: nla-lowcarb-2019
+    name: "National Lipid Association Nutrition & Lifestyle Task Force, 2019 (carb tiers in grams at 2,000 kcal: moderate 130-225 g, low 50-130 g, very-low <50 g/day)."
+    url: "https://www.sciencedirect.com/science/article/pii/S1933287419302673"
+    accessed: "2026-07-07"
+  - id: dietfits-lowcarb-convergence
+    name: "DIETFITS RCT + meta-analyses (PMC). Weight-loss outcomes driven by total calorie deficit and adherence; low-carb early advantage attenuates and converges with calorie-matched diets over 6-12 months."
+    url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10808819/"
+    accessed: "2026-07-07"
+  - id: tef-halton-hu-2004
+    name: "Halton TL, Hu FB. Effects of high protein diets on thermogenesis, satiety and weight loss: a critical review. J Am Coll Nutr 2004. (TEF ~20-30% protein vs 5-10% carb, 0-3% fat; higher protein raises satiety.) Corroborated by Adv Nutr 2024 TEF meta-analysis."
+    url: "https://www.ncbi.nlm.nih.gov/books/NBK70804/"
+    accessed: "2026-07-07"
+  - id: protein-satiety-hormones
+    name: "Steinert RE, et al. Ghrelin, CCK, GLP-1, and PYY: gut nutrient sensing and appetite. Physiol Rev 2017; and protein-appetite meta-analysis (PubMed 32768415). Protein lowers ghrelin, raises GLP-1/PYY/CCK; slowed gastric emptying suppresses appetite."
+    url: "https://journals.physiology.org/doi/full/10.1152/physrev.00031.2014"
+    accessed: "2026-07-07"
+  - id: soluble-fiber-satiety-meta
+    name: "Soluble/viscous dietary fibre on energy intake & satiety: SR & meta-analysis of RCTs (Foods 2019, PMC6352252). Viscous fibers raise satiety / cut energy intake; guar > beta-glucan > alginate > polydextrose > pectin. Plus AJCN 2022/2023 viscous-fiber weight-effect (~0.3-0.5 kg, small)."
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6352252/"
+    accessed: "2026-07-07"
+  - id: kdoqi-ckd-2020
+    name: "NKF KDOQI Clinical Practice Guideline for Nutrition in CKD, 2020 (AJKD). Metabolically stable CKD 3-5: protein 0.55-0.60 g/kg/day (0.6-0.8 with diabetes) under clinician guidance — the high-protein caveat."
+    url: "https://www.ajkd.org/article/S0272-6386(20)30726-5/fulltext"
+    accessed: "2026-07-07"
+  - id: cdc-niddk-weightloss
+    name: "CDC (Losing Weight) & NIH/NIDDK. Gradual loss ~1-2 lb/week is more likely to be maintained; short-term goal 5-10% of starting body weight over ~6 months."
+    url: "https://www.cdc.gov/healthy-weight-growth/losing-weight/index.html"
+    accessed: "2026-07-07"
+  - id: usda-fdc
+    name: "USDA FoodData Central. Foundation Foods + SR Legacy (final April 2018 release, ~7,793 foods) for generic ingredients, FNDDS for mixed foods; per-100 g values; no added-sugars value for generic foods (estimate it)."
+    url: "https://fdc.nal.usda.gov/"
+    accessed: "2026-07-07"
+  - id: aha-fish-omega3
+    name: "American Heart Association. Fish and Omega-3 Fatty Acids (two ~3.5-oz cooked servings/week of non-fried fish, prefer fatty fish)."
+    url: "https://www.heart.org/en/healthy-living/healthy-eating/eat-smart/fats/fish-and-omega-3-fatty-acids"
+    accessed: "2026-07-07"
+  - id: mayo-healthy-cooking
+    name: "Mayo Clinic. Healthy cooking basics & high-fiber foods (prefer bake/roast/grill/broil/steam/poach/saute in minimal oil; increase fiber gradually with adequate fluids)."
+    url: "https://www.mayoclinic.org/healthy-lifestyle/nutrition-and-healthy-eating/basics/healthy-cooking/hlv-20049477"
+    accessed: "2026-07-07"
+
+audience:
+  description: >-
+    General healthy US adults pursuing fat loss with muscle preservation, who are tired of hunger,
+    bland "diet food," and manual macro math. Not a therapeutic/medical diet; not age- or
+    medication-specific. They want quick, satisfying meals with the macros done for them.
+  primary_demographic: "General healthy US adults seeking weight loss with muscle preservation"
+  secondary_demographics:
+    - "People new to macro tracking who want the numbers done for them"
+    - "Busy adults who want fast, simple recipes"
+  why_it_matters:
+    - id: protein-satiety-and-muscle
+      summary: >-
+        Protein is the most satiating macronutrient and, above the 0.8 g/kg RDA (target ~1.6 g/kg/day
+        in a deficit), preserves lean mass while dieting; ~25-30 g per meal is the observed satiety and
+        muscle-protein-synthesis threshold. This is the engine of the book's "full, not starving" and
+        "lose fat not muscle" promises.
+      sources: [issn-protein-2017, ajcn-leidy-protein, acsm-acadnd-2016]
+    - id: fiber-fullness-and-gap
+      summary: >-
+        Fiber lowers dietary energy density, slows gastric emptying, and adds fullness; viscous/soluble
+        fiber has the strongest satiety signal. ~90%+ of US adults miss the fiber Adequate Intake, so a
+        genuinely high-fiber book closes a real gap.
+      sources: [acadnd-fiber-2015, soluble-fiber-satiety-meta, iom-dri-fiber]
+    - id: moderate-low-carb-quality
+      summary: >-
+        Moderate low-carb (not keto) plus high fiber keeps carbs quality-forward (whole grains, legumes,
+        vegetables, fruit) while cutting refined grains and added sugar; total calorie deficit and
+        adherence, not carb level per se, drive durable weight loss.
+      sources: [statpearls-lowcarb, dietfits-lowcarb-convergence, dga-2020-2025]
+  goals: ["lose fat", "build/preserve muscle", "stay full without hunger", "clear macros without the math"]
+
+daily_targets:
+  protein_g_per_kg_bodyweight:
+    min: 1.2
+    target: 1.6
+    max: 2.0
+    unit: g/kg/day
+    note: >-
+      Preserve lean mass during an energy deficit. RDA 0.8 g/kg is a deficiency floor, not a target.
+      Up to 2.3-3.1 g/kg is only for already-lean, resistance-trained dieters (footnote, not the default).
+    sources: [issn-protein-2017, acsm-acadnd-2016, ajcn-leidy-protein]
+  protein_g_per_meal_main:
+    floor: 25
+    target: 30
+    leucine_target_g: 2.5
+    note: "MPS + satiety threshold: ~0.25-0.4 g/kg or 20-40 g high-quality protein per meal, ~2-3 g leucine."
+    sources: [issn-protein-2017, ajcn-leidy-protein]
+  fiber_g_per_day:
+    min: 28
+    target: 30
+    by_sex: {men: 38, women: 25}
+    basis: "14 g per 1,000 kcal"
+    note: "FDA DV 28 g; IOM AI 38 g men / 25 g women under 50. This high-fiber book aims for the 28-38 g band."
+    sources: [fda-daily-values, iom-dri-fiber, acadnd-fiber-2015]
+  carbohydrate:
+    position: "moderate low-carb (not keto)"
+    pct_kcal_range: "26-35%"
+    total_g_per_day: {min: 100, max: 150}
+    net_g_per_day: {min: 80, max: 120}
+    note: >-
+      Moderate low-carb = lower end of the 26-44% moderate band on a 1,500-1,800 kcal weight-loss day.
+      Never keto. Emphasize carbohydrate quality; keep added sugar <10% kcal.
+    sources: [statpearls-lowcarb, nla-lowcarb-2019, dga-2020-2025]
+  added_sugar_pct_kcal_max: {value: 10, also: "FDA DV <50 g/day", sources: [dga-2020-2025, fda-daily-values]}
+  saturated_fat_pct_kcal_max: {value: 10, also: "FDA DV <20 g/day", sources: [dga-2020-2025, fda-daily-values]}
+  sodium_mg_per_day_max: {value: 2300, sources: [dga-2020-2025, fda-daily-values]}
+  energy_kcal_per_day:
+    reduced_calorie_range: {min: 1500, max: 1800}
+    deficit_note: "~500 kcal/day below maintenance is an illustrative framing, not a hard threshold."
+    sources: [cdc-niddk-weightloss]
+  weight_loss_rate:
+    lb_per_week: {min: 1, max: 2}
+    pct_bodyweight_6mo: {min: 5, max: 10}
+    note: "Gradual loss is more likely to be maintained. General guidance, not a prescription."
+    sources: [cdc-niddk-weightloss]
+  fish_servings_per_week: {value: 2, serving: "~3.5 oz cooked", prefer: "fatty fish", also: ">=8 oz seafood/week", sources: [aha-fish-omega3, dga-2020-2025]}
+  fda_daily_values:
+    note: "For optional %DV display; 2,000-kcal reference. Total sugars and trans fat carry no DV."
+    values: {fiber_g: 28, protein_g: 50, total_carb_g: 275, total_fat_g: 78, saturated_fat_g: 20, added_sugar_g: 50, sodium_mg: 2300, cholesterol_mg: 300, vitamin_d_mcg: 20, calcium_mg: 1300, iron_mg: 18, potassium_mg: 4700}
+    sources: [fda-daily-values, fda-nutrition-facts-101-9]
+
+per_recipe_constraints:
+  notes: >-
+    PER SERVING (serves 2). Per-serving numbers are DERIVED by splitting the daily targets across
+    ~3 main meals + 1-2 snacks; all are severity: soft (warnings). Only hard_blocks reject a recipe.
+    Protein and fiber floors on mains are near-hard editorially (the book's two headline nutrients).
+  meal_categories:
+    main:
+      protein_g:          {floor: 30, target: 35, severity: soft, why: "MPS + satiety threshold (~25-30 g) with margin; 'high protein' >=10 g DV; headline nutrient", derivation: "1.6 g/kg/day over 3 mains + snacks", sources: [issn-protein-2017, ajcn-leidy-protein, fda-nutrient-claims-101-54]}
+      fiber_g:            {floor: 8, target: 11, severity: soft, why: ">=5.6 g qualifies 'high fiber'; headline nutrient", derivation: "~30 g/day over meals", sources: [acadnd-fiber-2015, fda-nutrient-claims-101-54]}
+      net_carbs_g_max:    {value: 30, severity: soft, why: "moderate low-carb per main serving (total - fiber)", sources: [statpearls-lowcarb]}
+      total_carbs_g_max:  {value: 45, severity: soft, why: "moderate low-carb ceiling", sources: [statpearls-lowcarb, nla-lowcarb-2019]}
+      added_sugar_g_max:  {value: 6, severity: soft, sources: [dga-2020-2025]}
+      saturated_fat_g_max: {value: 6, severity: soft, why: "DGA <10% kcal at ~450-500 kcal", sources: [dga-2020-2025]}
+      sodium_mg_max:      {value: 700, severity: soft, sources: [dga-2020-2025]}
+      added_oil_tbsp_max: {value: 1, severity: soft, sources: [mayo-healthy-cooking]}
+      energy_kcal:        {min: 350, max: 500, severity: soft, sources: [cdc-niddk-weightloss]}
+    snack:
+      protein_g:          {floor: 12, target: 17, severity: soft, sources: [ajcn-leidy-protein]}
+      fiber_g:            {floor: 3, target: 5, severity: soft, why: ">=2.8 g qualifies 'good source'", sources: [fda-nutrient-claims-101-54]}
+      net_carbs_g_max:    {value: 15, severity: soft, sources: [statpearls-lowcarb]}
+      total_carbs_g_max:  {value: 20, severity: soft, sources: [statpearls-lowcarb]}
+      added_sugar_g_max:  {value: 5, severity: soft, sources: [dga-2020-2025]}
+      saturated_fat_g_max: {value: 3, severity: soft, sources: [dga-2020-2025]}
+      sodium_mg_max:      {value: 350, severity: soft, sources: [dga-2020-2025]}
+      energy_kcal:        {min: 150, max: 250, severity: soft, sources: [cdc-niddk-weightloss]}
+    dessert:
+      protein_g:          {floor: 8, target: 12, severity: soft, why: "on-brand high-protein dessert, not the full MPS dose", sources: [ajcn-leidy-protein]}
+      fiber_g:            {floor: 3, target: 4, severity: soft, sources: [fda-nutrient-claims-101-54]}
+      net_carbs_g_max:    {value: 15, severity: soft, sources: [statpearls-lowcarb]}
+      total_carbs_g_max:  {value: 25, severity: soft, sources: [statpearls-lowcarb]}
+      added_sugar_g_max:  {value: 10, severity: soft, why: "'guilt-free' + low-carb: well below a typical dessert; prefer fruit/fiber sweetness", sources: [dga-2020-2025]}
+      saturated_fat_g_max: {value: 5, severity: soft, sources: [dga-2020-2025]}
+      sodium_mg_max:      {value: 300, severity: soft, sources: [dga-2020-2025]}
+      energy_kcal:        {min: 150, max: 250, severity: soft, sources: [cdc-niddk-weightloss]}
+  hard_blocks:
+    - {rule: no_deep_fried, severity: hard, description: "Not deep-fried, batter-and-fried, or breaded-and-fried. Prefer bake/roast/grill/steam/saute in minimal oil (no air fryer).", sources: [dga-2020-2025, mayo-healthy-cooking]}
+    - {rule: no_sugar_sweetened_beverage_component, severity: hard, description: "No sugar-sweetened-beverage component (soda, sweet tea, fruit juice, sweetened coffee drinks, energy/sports drinks).", sources: [dga-2020-2025]}
+    - {rule: no_refined_grain_base, severity: hard, description: "The carbohydrate base is not a refined grain (white bread, white rice, regular pasta). Use whole/intact grains or lower-carb vegetable/legume bases.", sources: [dga-2020-2025, statpearls-lowcarb]}
+    - {rule: no_added_sugar_primary_base, severity: hard, description: "The recipe is not essentially a sugar-delivery vehicle; added sugar is not the primary ingredient by weight. (Desserts still respect the dessert added-sugar ceiling.)", sources: [dga-2020-2025]}
+    - {rule: no_processed_cured_meat_base, severity: hard, description: "Not built primarily on processed/cured meat (bacon, sausage, hot dogs, deli meats, salami) — sodium and saturated fat. Small flavoring amounts are bounded by the soft sat-fat/sodium ceilings.", sources: [dga-2020-2025]}
+
+nutrition_panel:
+  notes: >-
+    FDA-Nutrition-Facts-style per-serving panel computed via USDA FoodData Central (LLM picks a food
+    per ingredient; Python does the arithmetic, /2 servings). The six HERO 'clear macros' shown up front:
+    calories, protein_g, total carbs_g, net_carbs_g, fiber_g, fat_g. added_sugar_g is LLM-estimated
+    (USDA has no added-sugars value for generic foods). net_carbs_g is a derived convenience metric,
+    NOT an FDA term — always print total carbs + fiber and footnote it.
+  nutrients:
+    - {key: calories, label_en: "Calories", unit: kcal, tier: core, on_recipe_panel: true, usda_nutrient_id: 1008, why: "the energy frame for weight loss", sources: [fda-daily-values]}
+    - {key: protein_g, label_en: "Protein", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: 1003, why: "headline #1; muscle + satiety", sources: [issn-protein-2017, ajcn-leidy-protein]}
+    - {key: carbs_g, label_en: "Total Carbohydrate", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: 1005, why: "FDA-declared carb figure; ADA/FDA count total carb", sources: [fda-nutrition-facts-101-9]}
+    - {key: net_carbs_g, label_en: "Net Carbs", unit: g, tier: derived, on_recipe_panel: true, usda_nutrient_id: null, derivation: "max(0, carbs_g - fiber_g - sugar_alcohol_g)", why: "low-carb convenience metric; NOT an FDA/ADA term (footnote)", sources: [statpearls-lowcarb, fda-nutrition-facts-101-9]}
+    - {key: fiber_g, label_en: "Dietary Fiber", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: 1079, why: "headline #2; satiety + fullness", sources: [acadnd-fiber-2015]}
+    - {key: fat_g, label_en: "Total Fat", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: 1004, why: "FDA panel item; energy density", sources: [fda-daily-values]}
+    - {key: saturated_fat_g, label_en: "Saturated Fat", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: 1258, why: "DGA <10% kcal; per-tier ceiling", sources: [dga-2020-2025]}
+    - {key: sodium_mg, label_en: "Sodium", unit: mg, tier: core, on_recipe_panel: true, usda_nutrient_id: 1093, why: "DGA <2,300 mg/day; per-tier ceiling", sources: [dga-2020-2025]}
+    - {key: sugar_g, label_en: "Total Sugars", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: 2000, why: "FDA panel item (no DV)", sources: [fda-nutrition-facts-101-9]}
+    - {key: added_sugar_g, label_en: "Added Sugars", unit: g, tier: core, on_recipe_panel: true, usda_nutrient_id: null, status: estimated, why: "per-tier ceiling; USDA has no added-sugars value for generic foods so LLM estimates from added sweeteners", sources: [fda-daily-values, usda-fdc]}
+    - {key: cholesterol_mg, label_en: "Cholesterol", unit: mg, tier: extended, on_recipe_panel: true, usda_nutrient_id: 1253, why: "FDA-panel-mandatory", sources: [fda-daily-values]}
+    - {key: trans_fat_g, label_en: "Trans Fat", unit: g, tier: extended, on_recipe_panel: true, usda_nutrient_id: 1257, why: "FDA-panel-mandatory (no DV); sparse in USDA -> None ok", sources: [fda-daily-values]}
+    - {key: potassium_mg, label_en: "Potassium", unit: mg, tier: extended, on_recipe_panel: true, usda_nutrient_id: 1092, why: "FDA-panel-mandatory; id verified in nutrient.csv 2026-07-19", sources: [fda-daily-values]}
+    - {key: calcium_mg, label_en: "Calcium", unit: mg, tier: extended, on_recipe_panel: true, usda_nutrient_id: 1087, why: "FDA-panel-mandatory", sources: [fda-daily-values]}
+    - {key: iron_mg, label_en: "Iron", unit: mg, tier: extended, on_recipe_panel: true, usda_nutrient_id: 1089, why: "FDA-panel-mandatory", sources: [fda-daily-values]}
+    - {key: vitamin_d_mcg, label_en: "Vitamin D", unit: mcg, tier: extended, on_recipe_panel: true, usda_nutrient_id: 1114, why: "FDA-panel-mandatory; sparse in USDA -> None ok; id verified in nutrient.csv 2026-07-19", sources: [fda-daily-values]}
+    - {key: protein_per_100kcal, label_en: "Protein density", unit: g/100kcal, tier: internal, on_recipe_panel: false, usda_nutrient_id: null, derivation: "protein_g / calories * 100", why: "internal targeting of protein-dense recipes", sources: [ajcn-leidy-protein]}
+    - {key: saturated_fat_pct_kcal, label_en: "Sat fat % kcal", unit: percent, tier: internal, on_recipe_panel: false, usda_nutrient_id: null, derivation: "saturated_fat_g * 9 / calories * 100", why: "DGA <10% kcal frame per recipe", sources: [dga-2020-2025]}
+  considered_not_included:
+    - {name: "glycemic index / load per recipe", reason: "not reliably computable from a food DB for a mixed cooked dish; fiber + whole-grain-base + protein rules serve the same goal"}
+    - {name: "sugar alcohols as a headline", reason: "only relevant on rare recipes; subtracted in net_carbs when present, otherwise 0"}
+
+plate_composition:
+  applies_to: main
+  lean_protein: "~1/4 to 1/3 of the plate (protein-forward)"
+  non_starchy_vegetables: ">= 1/2 (fiber + volume)"
+  quality_carbohydrate: "<= 1/4 (whole grains, legumes, fruit) in a measured portion"
+  severity: soft
+  sources: [dga-2020-2025, ajcn-leidy-protein]
+
+recipe_categories:
+  high_protein_breakfasts:
+    book_title: "High-Protein Breakfasts"
+    planner_meal_types: [breakfast]
+    nutrient_tier: main
+    target_recipe_count: "20-24"
+    intent: "Start the day at the ~30 g protein satiety threshold so hunger stays gone until lunch."
+    dossier_refs: ["doc:section-2", "yaml:per_recipe_constraints.meal_categories.main"]
+    character: >-
+      Fast, savory-or-sweet high-protein breakfasts (eggs/egg whites, Greek yogurt, cottage cheese,
+      protein oats/chia, tofu scrambles). >=30 g protein, >=8 g fiber, moderate net carbs, minimal added
+      sugar. Many no-cook or under-15-minute. Not a refined-grain or sugary-cereal base.
+  satisfying_lunches:
+    book_title: "Satisfying Lunches"
+    planner_meal_types: [lunch]
+    nutrient_tier: main
+    target_recipe_count: "22-26"
+    intent: "Midday plates and bowls that keep you full through the afternoon slump."
+    dossier_refs: ["doc:section-2", "yaml:per_recipe_constraints.meal_categories.main"]
+    character: >-
+      Protein-forward bowls, salads, wraps (lettuce/whole-grain), and soups. Half the plate non-starchy
+      vegetables, a lean/complete protein, a measured whole-grain or legume carb. Batch/meal-prep friendly.
+  quick_easy_dinners:
+    book_title: "Quick & Easy Dinners"
+    planner_meal_types: [dinner]
+    nutrient_tier: main
+    target_recipe_count: "24-28"
+    intent: "Weeknight dinners that are fast, simple, and hit the protein + fiber targets."
+    dossier_refs: ["doc:section-2", "yaml:per_recipe_constraints.meal_categories.main"]
+    character: >-
+      One-pan / sheet-pan / skillet dinners built on lean poultry, fish/seafood, lean beef/pork, tofu,
+      or legumes with non-starchy vegetables. Baked/roasted/grilled/sauteed, not deep-fried (no air fryer).
+      <=~30 minutes active.
+  protein_packed_snacks:
+    book_title: "Protein-Packed Snacks"
+    planner_meal_types: [snack]
+    nutrient_tier: snack
+    target_recipe_count: "16-20"
+    intent: "Portable, protein-forward snacks that bridge meals without a sugar crash."
+    dossier_refs: ["doc:section-2", "yaml:per_recipe_constraints.meal_categories.snack"]
+    character: >-
+      Mini-meals and bites: Greek-yogurt/cottage-cheese cups, roasted edamame/chickpeas, protein bites,
+      jerky-style proteins, veggie + high-protein dips. >=12 g protein, >=3 g fiber, low added sugar.
+  guilt_free_desserts:
+    book_title: "Guilt-Free Desserts"
+    planner_meal_types: [dessert]
+    nutrient_tier: dessert
+    target_recipe_count: "12-16"
+    intent: "Sweet treats that fit the plan — protein-boosted, high-fiber, low added sugar."
+    dossier_refs: ["doc:section-2", "yaml:per_recipe_constraints.meal_categories.dessert"]
+    character: >-
+      Protein-and-fiber-forward desserts (Greek-yogurt bark, protein mug cakes, chia puddings,
+      berry-based treats) sweetened mostly with fruit/fiber and minimal added sugar. <=10 g added sugar.
+
+ingredients:
+  emphasize:
+    - {name: "skinless poultry (chicken, turkey)", category: lean_protein, why: "lean complete protein", sources: [dga-2020-2025]}
+    - {name: "fish & seafood incl. fatty fish (salmon, sardines, mackerel, trout, tuna)", category: lean_protein, why: ">=8 oz/week, 2 fatty-fish servings/week; omega-3", sources: [aha-fish-omega3, dga-2020-2025]}
+    - {name: "eggs & egg whites", category: lean_protein, why: "high-quality, leucine-rich protein", sources: [issn-protein-2017]}
+    - {name: "nonfat/low-fat Greek yogurt, cottage cheese, low-fat dairy", category: lean_protein, why: "protein density + satiety", sources: [ajcn-leidy-protein]}
+    - {name: "tofu, tempeh, edamame", category: plant_protein, why: "plant protein + fiber", sources: [dga-2020-2025]}
+    - {name: "legumes (beans, lentils, chickpeas, peas) in measured portions", category: plant_protein, why: "protein + viscous fiber", sources: [soluble-fiber-satiety-meta, dga-2020-2025]}
+    - {name: "non-starchy vegetables (leafy greens, broccoli, cauliflower, peppers, zucchini, Brussels sprouts)", category: non_starchy_vegetable, why: "fiber + volume, low net carbs", sources: [dga-2020-2025]}
+    - {name: "berries and lower-sugar whole fruit", category: fruit, why: "fiber, lower net carbs than tropical/dried fruit", sources: [dga-2020-2025]}
+    - {name: "nuts & seeds incl. chia and ground flax", category: fat_fiber, why: "viscous fiber + healthy fat + satiety", sources: [soluble-fiber-satiety-meta]}
+    - {name: "intact whole grains (oats, quinoa, barley, farro) in measured portions", category: whole_grain, why: "fiber-rich quality carbohydrate", sources: [dga-2020-2025]}
+    - {name: "unsaturated oils (olive, canola, avocado)", category: fat, why: "replace saturated fat", sources: [dga-2020-2025]}
+  limit:
+    - {name: "starchy vegetables and higher-sugar fruit (banana, mango, grapes, dried fruit)", category: carb, limit_qty: "small measured portions", why: "raises net carbs", sources: [statpearls-lowcarb, dga-2020-2025]}
+    - {name: "added sweeteners (sugar, honey, maple, agave)", category: added_sugar, limit_qty: "count toward the added-sugar ceiling", why: "<10% kcal from added sugar", sources: [dga-2020-2025]}
+    - {name: "full-fat dairy, butter, cream, full-fat cheese", category: saturated_fat, limit_qty: "small flavoring amounts", why: "saturated fat", sources: [dga-2020-2025]}
+    - {name: "red meat", category: protein, limit_qty: "lean cuts, modest portions", why: "saturated fat", sources: [dga-2020-2025]}
+  avoid:
+    - {name: "sugar-sweetened beverages (soda, sweet tea, fruit juice, sweetened coffee)", category: added_sugar, why: "empty added sugar", sources: [dga-2020-2025]}
+    - {name: "refined-grain bases (white bread, white rice, regular pasta)", category: refined_grain, why: "low fiber, raises net carbs", sources: [dga-2020-2025, statpearls-lowcarb]}
+    - {name: "processed & cured meats (bacon, sausage, hot dogs, deli meats)", category: processed_meat, why: "sodium + saturated fat", sources: [dga-2020-2025]}
+    - {name: "deep-fried foods and heavy cream/cheese/butter sauces", category: fried_fatty, why: "saturated fat + energy density", sources: [dga-2020-2025, mayo-healthy-cooking]}
+    - {name: "ultra-processed snack foods and pastries", category: ultra_processed, why: "added sugar, refined grain, sodium", sources: [dga-2020-2025]}
+
+cooking_methods:
+  prefer: [bake, roast, sheet-pan, grill, broil, steam, poach, saute-minimal-oil, stir-fry-minimal-oil, no-cook]
+  avoid: [deep-fry, shallow-fry-in-oil, batter-and-fry]
+  oil_guidance: "<= ~1 tbsp unsaturated oil per serving; use nonstick/spray, baste with broth/citrus instead of oil"
+  severity_avoid: hard
+  sources: [mayo-healthy-cooking, dga-2020-2025]
+
+satiety_and_safety:
+  satiety_mechanism:
+    summary: >-
+      Protein + fiber together suppress hunger: protein lowers ghrelin and raises GLP-1/PYY/CCK; fiber
+      slows gastric emptying and lowers energy density. ~25-30 g protein per meal is the observed satiety
+      threshold (<25 g shows little effect); viscous/soluble fiber gives the strongest fullness signal.
+    sources: [protein-satiety-hormones, ajcn-leidy-protein, soluble-fiber-satiety-meta]
+  metabolism_claims:
+    allowed:
+      - "protein has a higher thermic effect than carbs or fat (~20-30% vs ~5-10% vs ~0-3% of that macro's calories)"
+      - "protein + resistance training help protect calorie-burning muscle while you lose fat"
+      - "protein and fiber help you feel full"
+      - "supports / helps maintain your metabolism"
+    banned:
+      - "fat-burning foods / melts or torches fat"
+      - "supercharge / spike / boost your metabolism (as a large effect)"
+      - "named 'metabolism-boosting' ingredients with big calorie-burn promises"
+    note: "Total-diet TEF is only ~10% of intake and metabolism-booster foods add ~20-100 kcal/day — real but modest. Frame honestly."
+    sources: [tef-halton-hu-2004]
+  safety:
+    high_protein_is_safe_for_healthy_adults: "Protein up to ~1.4-2.0 g/kg/day is not harmful to kidney or bone in healthy adults."
+    ckd_caveat: "Chronic kidney disease restricts protein (~0.55-0.60 g/kg/day) under clinician guidance — the key exception."
+    fiber_ramp: "Increase fiber gradually (about +5 g/day per week) with adequate fluids to avoid GI discomfort."
+    sources: [issn-protein-2017, kdoqi-ckd-2020, mayo-healthy-cooking]
+  disclaimer: >-
+    This book is for general educational purposes only and is not individualized medical or nutritional
+    advice. It does not diagnose, treat, or replace care from your physician or registered dietitian.
+    Nutrition information is estimated using USDA data and may vary with ingredients, brands, and
+    preparation. Consult a qualified healthcare professional before making significant dietary changes —
+    especially if you have chronic kidney disease or other kidney concerns, are pregnant or breastfeeding,
+    take glucose-lowering (e.g., insulin/sulfonylureas) or blood-pressure medications, or have a history
+    of an eating disorder. Increase fiber gradually and drink plenty of water. Stop and seek medical
+    advice if you experience adverse symptoms.
+
+easy_recipe_constraints:
+  is_editorial: true
+  note: "'Super Easy' + 'Quick' positioning — real, busy-life simplicity."
+  max_ingredients: 10
+  max_active_time_min: 30
+  max_total_time_min: 45
+  max_steps: 7
+  equipment: "common home kitchen (stovetop, oven, blender); no air fryer; no specialty gear"
+  formats_to_favor: [one-pan, sheet-pan, skillet, one-bowl, no-cook, meal-prep-friendly]
+  exceptions_allowed: "a few longer set-and-forget slow-cooker/oven recipes are fine"
+
+prompt_snippets:
+  ideation: |
+    You are creating recipes for "Super Easy & Complete High-Protein High-Fiber Cookbook for Weight Loss"
+    — quick, delicious, moderate-low-carb recipes for general healthy US adults who want to lose fat,
+    keep their muscle, and stay full without hunger. Every recipe idea must be:
+    - HIGH IN PROTEIN: a main dish delivers >=30 g protein per serving (the ~25-30 g satiety/muscle
+      threshold with margin) from lean, complete proteins — poultry, fish/seafood, eggs/egg whites,
+      Greek yogurt/cottage cheese, tofu/tempeh/edamame, legumes, lean beef/pork.
+    - HIGH IN FIBER: >=8 g fiber per main serving, favoring viscous/soluble sources (oats, legumes,
+      chia/flax, berries, non-starchy vegetables).
+    - MODERATE LOW-CARB (not keto): keep net carbs modest per serving; the carb component is a whole/
+      intact grain, legume, vegetable, or whole fruit in a measured portion — never a refined-grain base.
+    - LOW IN ADDED SUGAR: prefer fruit/fiber for sweetness; no sugar-sweetened-beverage components.
+    - QUICK & SIMPLE: <=~10 ingredients, <=~30 minutes active, <=~7 steps; one-pan/sheet-pan/no-cook
+      formats welcome. Bold flavor, real food — never bland "diet food."
+    Half the plate is non-starchy vegetables on mains. Bake/roast/grill/steam/saute in minimal
+    oil — never deep-fry. Keep sodium and saturated fat modest.
+  drafting: |
+    Diet rules (must be followed), PER SERVING (recipe serves 2):
+    - MAIN (breakfast/lunch/dinner): protein >=30 g; fiber >=8 g; net carbs <=30 g and total carbs <=45 g;
+      added sugar <=6 g; saturated fat <=6 g; sodium <=700 mg; <=~1 tbsp added unsaturated oil; ~350-500 kcal.
+    - SNACK: protein >=12 g; fiber >=3 g; net carbs <=15 g; added sugar <=5 g; saturated fat <=3 g;
+      sodium <=350 mg; ~150-250 kcal.
+    - DESSERT: protein >=8 g; fiber >=3 g; net carbs <=15 g; added sugar <=10 g; saturated fat <=5 g;
+      sodium <=300 mg; ~150-250 kcal.
+    Hard rules for every recipe: not deep-fried/battered-and-fried; no sugar-sweetened-beverage component;
+    no refined-grain base (white bread/rice/pasta); the recipe is not essentially a sugar-delivery vehicle;
+    not built on processed/cured meat; keep sodium under the ceiling — specify every canned/jarred item as
+    "no-salt-added"/"low-sodium" and "rinsed", use untreated seafood, and don't stack multiple canned/cured
+    items; no air fryer (stovetop/oven/no-cook only). Report clear per-serving macros: Calories, Protein, Total Carbs,
+    Net Carbs (= total carbs - fiber), Fiber, Fat up front, plus the full FDA panel. Net carbs is a
+    convenience number, not an FDA term. Favor plate method on mains: >=1/2 non-starchy vegetables,
+    ~1/4-1/3 lean protein, <=1/4 quality carb.
+  critic: |
+    Guideline-fit checklist (judge what the automated checks cannot see; do NOT re-flag the deterministic
+    protein/fiber/carb/sugar/sat-fat/sodium numbers or the hard bans — those are already enforced):
+    1. hp_hf_fit: Does the recipe genuinely read as high-protein AND high-fiber (protein- and
+       vegetable/legume-forward), not a low-protein dish with a protein number bolted on?
+    2. satiety_support: Would this actually keep a dieter full — protein- and fiber-dense per calorie,
+       not a small portion gamed to hit a ratio?
+    3. low_carb_quality: Is the carbohydrate quality-forward (whole grains, legumes, vegetables, fruit)
+       and moderate — no sneaky refined-grain or added-sugar base dodging the keyword checks?
+    4. quick_simple_practicality: Is it truly quick and simple for a busy adult (ingredient count, active
+       time, common equipment), matching the "Super Easy" promise?
+    Also flag any over-claim language ("fat-burning", "melts fat", "boosts metabolism") — keep claims honest.

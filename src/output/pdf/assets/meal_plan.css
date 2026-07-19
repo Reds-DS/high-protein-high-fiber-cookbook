@@ -1,0 +1,498 @@
+/* ─────────────────────────────────────────────────────────────
+   Paged media
+   ───────────────────────────────────────────────────────────── */
+
+@page {
+  size: A4;
+  margin: 18mm 16mm 20mm 16mm;
+  background: #f7f4ec;
+
+  @top-left {
+    content: string(bookName);
+    font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+    font-size: 8.5pt;
+    color: #6e8c62;
+    letter-spacing: 0.02em;
+  }
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+    font-size: 8.5pt;
+    color: #6e8c62;
+  }
+}
+
+/* Strip headers/footers from the cover page */
+@page :first {
+  @top-left { content: none; }
+  @bottom-right { content: none; }
+}
+
+/* Optional fonts — drop TTFs into ./fonts/ to upgrade typography. */
+@font-face { font-family: "Lora";  src: url("fonts/Lora.ttf")  format("truetype"); font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter.ttf") format("truetype"); font-display: swap; }
+
+/* ─────────────────────────────────────────────────────────────
+   Palette + base
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --ink:      #2a2f26;   /* deep forest */
+  --muted:    #7b7e71;   /* muted olive */
+  --accent:   #6e8c62;   /* sage green  */
+  --accent-2: #9ab492;   /* soft sage   */
+  --surface:  #f7f4ec;   /* cream       */
+  --stripe:   #ece7d7;   /* warm beige  */
+  --rule:     #d9d3bf;
+  --rule-soft:#e6e1cc;
+}
+
+html {
+  font-family: "Lora", Georgia, "DejaVu Serif", serif;
+  font-size: 10pt;
+  color: var(--ink);
+  line-height: 1.35;
+}
+body { margin: 0; background: var(--surface); }
+
+h1, h2, h3 {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+/* Register the running-header string, from the entire document. */
+body { string-set: bookName attr(data-book-name); }
+
+/* ─────────────────────────────────────────────────────────────
+   Cover
+   ───────────────────────────────────────────────────────────── */
+
+.cover {
+  page-break-after: always;
+  padding-top: 40mm;
+  height: 100%;
+  position: relative;
+}
+
+.cover .eyebrow {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 10pt;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin: 0 0 6mm 0;
+}
+
+.cover h1 {
+  font-size: 30pt;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--ink);
+  max-width: 150mm;
+}
+
+.cover .objective {
+  font-size: 13pt;
+  font-style: italic;
+  margin: 16mm 0 0 0;
+  max-width: 140mm;
+  color: #3a3a3a;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Week section (one per week, each starts on a new page)
+   ───────────────────────────────────────────────────────────── */
+
+.week { page-break-before: always; }
+
+.week .week-header {
+  margin-bottom: 6mm;
+  padding-bottom: 2mm;
+  border-bottom: 2px solid var(--accent);
+}
+.week .week-header h2 {
+  font-size: 20pt;
+  margin: 0;
+  color: var(--ink);
+}
+.week .week-header .week-stats {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 9pt;
+  color: var(--muted);
+  margin: 1mm 0 0 0;
+  letter-spacing: 0.02em;
+}
+
+.week h3.section-label {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 11pt;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin: 8mm 0 3mm 0;
+}
+.week h3.section-label:first-of-type { margin-top: 4mm; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+  table-layout: fixed;
+}
+
+thead { display: table-header-group; }
+
+thead th {
+  background: var(--accent);
+  color: #fff;
+  text-align: left;
+  padding: 2.5mm 3mm;
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-weight: 600;
+  font-size: 9pt;
+  letter-spacing: 0.02em;
+}
+
+th.col-day   { width: 10mm; text-align: center; }
+th.col-total { width: 18mm; text-align: right; }
+
+tbody tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+tbody tr:nth-child(even) { background: var(--stripe); }
+
+tbody td {
+  padding: 2mm 3mm;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--rule);
+}
+
+td.day {
+  text-align: center;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+}
+
+td.total {
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+}
+
+/* Meal cell: thumbnail + stacked text */
+td.meal {
+  display: table-cell;
+}
+td.meal .thumb {
+  width: 9mm;
+  height: 9mm;
+  object-fit: cover;
+  border-radius: 1.2mm;
+  vertical-align: middle;
+  margin-right: 2mm;
+  box-shadow: 0 0 0 0.2mm var(--rule);
+}
+td.meal .thumb-placeholder {
+  display: inline-block;
+  background: transparent;
+  box-shadow: none;
+}
+td.meal .meal-text {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: calc(100% - 12mm);
+}
+td.meal .title {
+  display: block;
+  font-weight: 500;
+  line-height: 1.2;
+}
+td.meal .kcal {
+  display: block;
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 7.5pt;
+  color: var(--muted);
+  margin-top: 0.5mm;
+}
+td.meal .dash {
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Course list (nested inside .week)
+   ───────────────────────────────────────────────────────────── */
+
+.courses .category {
+  margin-top: 5mm;
+  break-inside: avoid;
+}
+
+.courses h4 {
+  font-size: 10pt;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 2mm 0;
+  padding-bottom: 1mm;
+  border-bottom: 1px solid var(--rule);
+}
+
+.courses ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 2;
+  column-gap: 10mm;
+}
+
+.courses li {
+  break-inside: avoid;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1.2mm 0;
+  border-bottom: 1px dotted var(--rule);
+  gap: 3mm;
+}
+
+.courses .ingredient {
+  color: var(--ink);
+}
+
+.courses .qty {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.courses ul.optional li .ingredient {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Back page
+   ───────────────────────────────────────────────────────────── */
+
+.back {
+  page-break-before: always;
+  padding-top: 80mm;
+  text-align: center;
+  color: var(--muted);
+}
+
+.back .thanks {
+  font-size: 28pt;
+  font-style: italic;
+  color: var(--ink);
+  margin: 0 0 10mm 0;
+}
+
+.back .colophon {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 9pt;
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Profile & targets (personalized plans only)
+   ───────────────────────────────────────────────────────────── */
+
+.profile {
+  page-break-after: always;
+  padding: 12mm 4mm 16mm 4mm;
+  border-top: 1px solid var(--rule-soft);
+  /* Long ingredient names / unbroken tokens must wrap, not overflow. */
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+
+.profile h2 {
+  font-size: 18pt;
+  color: var(--accent);
+  margin: 0 0 6mm 0;
+  page-break-after: avoid;
+}
+
+.profile h3.profile-section {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 5mm 0 2mm 0;
+  letter-spacing: 0.01em;
+  /* Keep section heading together with at least its first body line. */
+  page-break-after: avoid;
+}
+
+.profile .profile-line {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.4;
+  margin: 2mm 0;
+  color: var(--ink);
+  /* Each line is short — keep each one whole rather than splitting mid-line
+     across a page break. */
+  page-break-inside: avoid;
+}
+
+.profile .profile-line strong { color: var(--accent); }
+
+.profile .warnings {
+  margin: 6mm 0 0 0;
+  padding-left: 5mm;
+  color: #8a5a1f;
+  font-size: 9.5pt;
+  line-height: 1.4;
+}
+
+.profile .warnings li {
+  margin: 0 0 1.5mm 0;
+  page-break-inside: avoid;
+}
+
+.profile .adjustments-title {
+  margin-top: 6mm;
+  font-size: 11pt;
+  color: var(--accent);
+  /* Title + first adjustment line should stay together. */
+  page-break-after: avoid;
+}
+
+.profile .adjustments {
+  color: #6b6b6b;
+  font-size: 9pt;
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Per-day Δ kcal column (personalized plans only)
+   ───────────────────────────────────────────────────────────── */
+
+.col-delta {
+  text-align: right;
+  font-size: 9pt;
+  color: var(--muted);
+}
+
+td.delta {
+  text-align: right;
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 9pt;
+  color: var(--muted);
+}
+
+td.delta.delta-warn {
+  color: #b45c2e;
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Insights — personalized intro page (1 A4)
+   ───────────────────────────────────────────────────────────── */
+
+.insights {
+  page-break-after: always;
+  padding: 12mm 4mm 14mm 4mm;
+  /* Long unbroken tokens shouldn't overflow the column. */
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+
+.insights .eyebrow {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 9.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin: 0 0 3mm 0;
+  /* Eyebrow + h2 + first block must stay together — no orphan heading. */
+  page-break-after: avoid;
+}
+
+.insights h2 {
+  font-size: 18pt;
+  line-height: 1.2;
+  margin: 0 0 6mm 0;
+  color: var(--ink);
+  max-width: 160mm;
+  page-break-after: avoid;
+}
+
+/* Single-column stacked layout — earlier 2-column grid put `Tes macros`
+   into a ~85 mm column where each macro line wrapped so aggressively that
+   words were clipped at the column edge. Stacked full-width keeps every
+   line readable on one A4. */
+.insights-grid {
+  display: block;
+}
+
+.insights-block {
+  break-inside: avoid;
+  margin: 0 0 5mm 0;
+}
+
+.insights-block h3 {
+  font-family: "Inter", "Helvetica Neue", "DejaVu Sans", sans-serif;
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 2mm 0;
+  letter-spacing: 0.01em;
+}
+
+.insights-block p {
+  font-size: 9.5pt;
+  line-height: 1.4;
+  margin: 0 0 1.5mm 0;
+  color: var(--ink);
+}
+
+.insights-block p.hint {
+  font-size: 8.5pt;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.insights-block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 9.5pt;
+  line-height: 1.4;
+}
+
+.insights-block ul li {
+  margin: 0 0 1.5mm 0;
+  padding-left: 4mm;
+  text-indent: -4mm;
+}
+
+.insights-block ul.levers li {
+  padding-left: 8mm;
+  text-indent: -8mm;
+}
+
+.insights-block .lever-ico {
+  display: inline-block;
+  width: 6mm;
+  text-indent: 0;
+  font-size: 10pt;
+}
+
+.insights-block code {
+  font-family: "Inter", "DejaVu Sans Mono", monospace;
+  font-size: 8.5pt;
+  background: var(--stripe);
+  padding: 0.5mm 1mm;
+  border-radius: 1mm;
+}
+
+.insights-block strong {
+  color: var(--ink);
+}

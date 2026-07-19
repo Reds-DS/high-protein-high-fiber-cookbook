@@ -1,0 +1,18 @@
+.env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+data/generated_recipes/
+data/*.db
+data/*.log
+data/batch_state/
+data/users/
+.claude/
+
+# USDA FoodData Central raw CSV bundle (downloaded separately, multi-GB)
+usda_source_data/

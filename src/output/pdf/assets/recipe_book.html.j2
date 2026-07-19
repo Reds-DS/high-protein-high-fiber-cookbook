@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ section_title }} — {{ book_name }}</title>
+</head>
+<body data-book-name="{{ book_name }}">
+
+  {%- macro nf(value, unit, dec=1, est=false) -%}
+    {%- if value is none -%}—{%- else -%}
+      {{- (value|round(dec)) if dec > 0 else (value|round|int) }} {{ unit }}{{ '*' if est else '' -}}
+    {%- endif -%}
+  {%- endmacro -%}
+
+  {# ── Cover ────────────────────────────────────────────── #}
+  <section class="cover">
+    <p class="eyebrow">Recipes</p>
+    <h1>{{ section_title }}</h1>
+    <p class="subtitle">{{ book_name }}</p>
+    <p class="count">{{ recipes|length }} recipes</p>
+  </section>
+
+  {# ── Table of contents ────────────────────────────────── #}
+  <section class="toc">
+    <h2>Contents</h2>
+    <ol>
+      {% for recipe in recipes %}
+        <li><span class="toc-title">{{ recipe.title }}</span></li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  {# ── Recipe pages ─────────────────────────────────────── #}
+  {% for recipe in recipes %}
+  <section class="recipe-page">
+    <div class="recipe-header">
+      {% set img = image_urls.get(recipe.id) %}
+      {% if img %}
+        <img class="recipe-image" src="{{ img }}" alt="{{ recipe.title }}">
+      {% endif %}
+
+      <h2>{{ recipe.title }}</h2>
+      <p class="intro">{{ recipe.intro }}</p>
+
+      <div class="info-bar">
+        <div class="info-item">
+          <span class="info-value">{{ recipe.prep_time_min }} min</span>
+          Prep
+        </div>
+        <div class="info-item">
+          {% if recipe.cook_time_max_min and recipe.cook_time_max_min != recipe.cook_time_min %}
+            <span class="info-value">{{ recipe.cook_time_min }}–{{ recipe.cook_time_max_min }} min</span>
+          {% else %}
+            <span class="info-value">{{ recipe.cook_time_min }} min</span>
+          {% endif %}
+          Cook
+        </div>
+        <div class="info-item">
+          <span class="info-value">{{ recipe.servings }}</span>
+          Servings
+        </div>
+      </div>
+    </div>
+
+    <div class="recipe-body">
+      <div class="col-ingredients">
+        <h3>Ingredients</h3>
+        <ul class="ingredients-list">
+          {% for ing in recipe.ingredients %}
+            <li>
+              <span class="qty">{{ ing.quantity_display }}</span> {{ ing.name }}
+              {%- if ing.preparation %}, {{ ing.preparation }}{% endif %}
+              {%- if ing.is_optional %} <span class="optional-tag">(optional)</span>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col-instructions">
+        <h3>Instructions</h3>
+        <ol class="instructions-list">
+          {% for step in recipe.instructions %}
+            <li>{{ step }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    {% if recipe.nutrition_per_serving %}
+      {% set n = recipe.nutrition_per_serving %}
+      {% set good_fats = ((n.mufa_g or 0) + (n.pufa_g or 0)) if (n.mufa_g is not none or n.pufa_g is not none) else none %}
+      <div class="nutrition-section">
+        <h3>Nutrition (per serving){% if n.confidence != 'high' %} <span class="nutrition-confidence">(confidence: {{ n.confidence }})</span>{% endif %}</h3>
+        <table class="nutrition-table">
+          <tbody>
+            <tr><th>Calories</th><td>{{ nf(n.calories_kcal, 'kcal', 0) }}</td></tr>
+            <tr><th>Total fat</th><td>{{ nf(n.fat_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;Saturated fat</th><td>{{ nf(n.saturated_fat_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;Trans fat</th><td>{{ nf(n.trans_fat_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;of which good fats (mono + poly)</th><td>{{ nf(good_fats, 'g') }}</td></tr>
+            <tr><th>Cholesterol</th><td>{{ nf(n.cholesterol_mg, 'mg', 0) }}</td></tr>
+            <tr><th>Sodium</th><td>{{ nf(n.sodium_mg, 'mg', 0) }}</td></tr>
+            <tr><th>Total carbohydrate</th><td>{{ nf(n.carbs_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;Net carbs</th><td>{{ nf(n.net_carbs_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;Dietary fiber</th><td>{{ nf(n.fiber_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;Total sugars</th><td>{{ nf(n.sugar_g, 'g') }}</td></tr>
+            <tr class="sub"><th>&nbsp;&nbsp;&nbsp;&nbsp;incl. added sugars</th><td>{{ nf(n.added_sugar_g, 'g', est=true) }}</td></tr>
+            <tr><th>Protein</th><td>{{ nf(n.protein_g, 'g') }}</td></tr>
+            <tr><th>Potassium</th><td>{{ nf(n.potassium_mg, 'mg', 0) }}{% if n.potassium_mg is not none %}†{% endif %}</td></tr>
+            <tr><th>Calcium</th><td>{{ nf(n.calcium_mg, 'mg', 0) }}</td></tr>
+            <tr><th>Iron</th><td>{{ nf(n.iron_mg, 'mg', 2) }}</td></tr>
+            <tr><th>Vitamin D</th><td>{{ nf(n.vitamin_d_mcg, 'mcg', 2) }}</td></tr>
+          </tbody>
+        </table>
+        {% if n.added_sugar_g is not none or n.potassium_mg is not none %}
+        <p class="nutrition-notes">
+          {%- if n.added_sugar_g is not none %}*Added sugars are an estimate. {% endif -%}
+          {%- if n.potassium_mg is not none %}†Potassium needs may be lower with chronic kidney disease — ask your care team.{% endif -%}
+        </p>
+        {% endif %}
+        {% if n.missing_ingredients %}
+          <p class="nutrition-notes">Ingredients without nutrition data: {{ n.missing_ingredients|join(', ') }}.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  {# ── Back page ────────────────────────────────────────── #}
+  <section class="back">
+    <p class="thanks">Enjoy your meal.</p>
+  </section>
+
+</body>
+</html>

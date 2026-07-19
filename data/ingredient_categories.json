@@ -1,0 +1,94 @@
+{
+  "_comment": "Fallback keyword -> category map for course-list categorisation. Keys are accent-folded, lowercased English substrings; the first match wins. Order inside each category is 'most specific first' — longer/more specific patterns should be placed before shorter ones to avoid accidental prefix matches.",
+  "categories": {
+    "Produce — Fruit": [
+      "apple", "pear", "banana", "orange", "lemon", "lime", "grapefruit",
+      "strawberry", "strawberries", "raspberry", "raspberries", "blueberry", "blueberries",
+      "blackberry", "blackberries", "cranberry", "cranberries", "cherry", "cherries",
+      "grape", "peach", "apricot", "plum", "mango", "pineapple", "kiwi",
+      "fig", "date", "pomegranate", "melon", "watermelon", "cantaloupe",
+      "clementine", "tangerine", "mandarin", "nectarine", "papaya", "avocado",
+      "banana", "berry", "berries"
+    ],
+    "Produce — Vegetables": [
+      "tomato", "tomatoes", "carrot", "zucchini", "courgette", "eggplant", "aubergine",
+      "bell pepper", "pepper", "cucumber",
+      "onion", "shallot", "garlic", "leek", "celery", "fennel",
+      "lettuce", "arugula", "rocket", "spinach", "swiss chard", "chard", "kale", "salad greens",
+      "cabbage", "broccoli", "cauliflower", "kohlrabi", "sauerkraut",
+      "green bean", "green beans", "snap pea", "snow pea", "edamame", "corn",
+      "mushroom", "shiitake", "oyster mushroom", "portobello",
+      "radish", "turnip", "beet", "beetroot", "rutabaga", "jerusalem artichoke",
+      "sweet potato", "kabocha", "pumpkin", "butternut squash", "squash",
+      "asparagus", "artichoke", "endive", "parsnip",
+      "scallion", "green onion", "watercress", "okra", "bok choy"
+    ],
+    "Meat & Poultry": [
+      "beef", "veal", "lamb", "mutton", "pork", "ham",
+      "bacon", "chorizo", "sausage", "prosciutto", "pancetta",
+      "ground beef", "ground turkey", "ground chicken", "ground pork",
+      "liver",
+      "chicken", "turkey", "duck", "quail", "guinea fowl", "goose",
+      "rabbit", "game", "venison"
+    ],
+    "Fish & Seafood": [
+      "salmon", "tuna", "cod", "haddock", "pollock", "hake",
+      "sardine", "mackerel", "herring", "anchovy", "anchovies", "sole", "halibut",
+      "sea bass", "bass", "sea bream", "snapper", "monkfish", "trout", "tilapia",
+      "shrimp", "prawn", "langoustine", "lobster", "crab",
+      "mussel", "oyster", "clam", "scallop",
+      "squid", "calamari", "cuttlefish", "octopus", "fish"
+    ],
+    "Dairy & Eggs": [
+      "egg", "eggs", "egg white", "egg whites",
+      "milk", "cream", "butter",
+      "yogurt", "yoghurt", "skyr", "cottage cheese", "ricotta", "quark",
+      "mozzarella", "feta", "parmesan", "gruyere", "cheddar", "swiss cheese",
+      "goat cheese", "blue cheese", "brie", "camembert",
+      "mascarpone", "cream cheese", "cheese"
+    ],
+    "Grains, Starches & Legumes": [
+      "rice", "quinoa", "bulgur", "couscous", "millet",
+      "buckwheat", "spelt", "barley", "oat", "oats", "rolled oats",
+      "pasta", "spaghetti", "tagliatelle", "penne", "macaroni", "fusilli",
+      "lasagna", "ravioli", "noodle", "noodles",
+      "bread", "baguette", "tortilla", "wrap", "pita", "flatbread",
+      "potato", "potatoes", "gnocchi", "polenta",
+      "lentil", "lentils", "chickpea", "chickpeas", "kidney bean", "white bean",
+      "black bean", "navy bean", "cannellini bean", "pinto bean", "bean", "beans"
+    ],
+    "Oils & Fats": [
+      "olive oil", "canola oil", "rapeseed oil", "sunflower oil",
+      "sesame oil", "walnut oil", "coconut oil", "avocado oil", "oil",
+      "margarine", "ghee"
+    ],
+    "Nuts & Seeds": [
+      "almond", "almonds", "hazelnut", "walnut", "walnuts", "pecan", "pistachio",
+      "peanut", "peanuts", "cashew", "cashews", "pine nut", "pine nuts",
+      "flax seed", "flaxseed", "chia seed", "chia seeds", "pumpkin seed", "sunflower seed",
+      "sesame seed", "sesame", "hemp seed", "nut", "seed", "seeds"
+    ],
+    "Herbs & Spices": [
+      "parsley", "cilantro", "coriander", "chive", "chives", "basil", "mint", "tarragon",
+      "thyme", "rosemary", "bay leaf", "sage", "oregano", "dill",
+      "turmeric", "ginger", "cumin", "paprika", "chili", "chilli", "cayenne", "black pepper",
+      "salt", "cinnamon", "nutmeg", "saffron", "cardamom", "clove", "cloves",
+      "za'atar", "tandoori", "curry powder", "garam masala", "ras el hanout",
+      "italian seasoning", "herbes de provence", "allspice", "pepper"
+    ],
+    "Condiments & Sauces": [
+      "vinegar", "mustard", "mayonnaise", "ketchup", "soy sauce", "tamari",
+      "tomato sauce", "marinara", "tomato paste", "passata",
+      "tahini", "harissa", "pesto", "tapenade", "hot sauce", "sriracha", "salsa",
+      "honey", "maple syrup", "agave syrup", "molasses",
+      "broth", "stock", "bouillon"
+    ],
+    "Pantry & Baking": [
+      "flour", "cornstarch", "corn starch", "baking powder", "baking soda", "yeast", "sugar",
+      "sweetener", "stevia", "erythritol", "monk fruit",
+      "chocolate", "cocoa", "vanilla",
+      "olive", "olives", "pickle", "pickles", "caper", "capers",
+      "coconut milk", "almond milk", "soy milk", "oat milk", "plant milk", "plant-based milk"
+    ]
+  }
+}
