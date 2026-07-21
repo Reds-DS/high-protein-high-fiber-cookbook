@@ -7,7 +7,11 @@ dist/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
-data/generated_recipes/
+# Generated books stay local, EXCEPT the tracked one below. Note the `/*` — excluding the
+# directory itself would make the negation below a no-op (git never descends into an
+# excluded directory, so a file inside it cannot be re-included).
+data/generated_recipes/*
+!data/generated_recipes/recipes-cookbook-v1/
 data/*.db
 data/*.log
 data/batch_state/

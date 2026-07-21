@@ -148,6 +148,9 @@ and the quantity-plausibility gate are blocking.
 - Recipes must **not** use an air fryer (stovetop / oven / no-cook only). Oven temps are written in
   °F **and** °C; stovetop heat is a level word (medium-high…) + a sensory cue, never a numeric setpoint.
 - Generated content, DBs, and the multi-GB `usda_source_data/` are git-ignored; `.env` (real keys) is
-  git-ignored — only `.env.example` (placeholders) is tracked.
+  git-ignored — only `.env.example` (placeholders) is tracked. **Exception:** the book
+  `data/generated_recipes/recipes-cookbook-v1/` is deliberately tracked (see `.gitignore`) — it is the
+  delivered cookbook, not scratch output. Other books (`test*`, future runs) stay ignored. Note this
+  repo is public, so anything committed under that book is published.
 - Tests run fully offline (LLM/USDA calls are not made); they exercise the deterministic layers
   (diet rules, quantity/cooking checks, spec loading, planner, personalization, formatters).
