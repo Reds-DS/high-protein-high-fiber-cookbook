@@ -560,6 +560,11 @@ def recompute_nutrition(
     force: Annotated[bool, typer.Option("--force", help="Overwrite the destination book if it exists.")] = False,
     dry_run: Annotated[bool, typer.Option("--dry-run", help="Compute without writing any files.")] = False,
     technique: Annotated[str, typer.Option("--technique", "-t", help="Cooking technique (passed to the USDA candidate search).")] = "",
+    all_recipes: Annotated[bool, typer.Option(
+        "--all",
+        help="Recompute every recipe, including ones already on the current Stage 4 "
+             "source. Use after rebuilding data/usda.db.",
+    )] = False,
 ) -> None:
     """Copy a book and recompute its nutrition values via the current Stage 4.
 
@@ -635,9 +640,11 @@ def recompute_nutrition(
             failures.append((json_path, f"parse: {e}"))
             continue
 
-        # Idempotence: if the recipe is already on "llm_usda", skip it.
+        # Idempotence: if the recipe is already on "llm_usda", skip it. This guards the
+        # one-time migration off an older source — it does NOT know whether usda.db has
+        # been rebuilt since, so --all is required to re-derive against a new database.
         existing_source = (raw.get("nutrition_per_serving") or {}).get("source")
-        if existing_source == "llm_usda":
+        if existing_source == "llm_usda" and not all_recipes:
             skipped_already_done += 1
             console.print(f"[dim][{idx}/{total}] ⊘ {draft.title} — already recomputed[/dim]")
             continue

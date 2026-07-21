@@ -29,6 +29,7 @@ from datetime import datetime
 from pathlib import Path
 
 from src.config import USDA_ALIAS_DB, USDA_DB, USDA_SOURCE_DIR
+from src.nutrition import qualifiers
 
 # ── which FDC foods we load ────────────────────────────────────
 USDA_DATA_TYPES: tuple[str, ...] = ("foundation_food", "sr_legacy_food", "survey_fndds_food")
@@ -80,11 +81,14 @@ COOKED_KEYWORDS: tuple[str, ...] = (
     "braised", "pan-fried", "stewed", "simmered", "poached",
 )
 
-# words USDA descriptions usually omit — dropped during the *relaxation* tiers only
+# words USDA descriptions usually omit — dropped during the *relaxation* tiers only.
+# NOTE: salt words are deliberately absent. "unsalted"/"salted" are not noise — they pick
+# out a different food with a different sodium basis, so dropping them during relaxation is
+# how a no-salt-added request ends up matched to a salted record (see src/nutrition/qualifiers.py).
 _NOISE_WORDS: frozenset[str] = frozenset({
     "raw", "fresh", "frozen", "canned", "dried", "drained", "cooked",
     "chopped", "sliced", "diced", "minced", "shredded", "grated", "ground",
-    "peeled", "trimmed", "boneless", "skinless", "unsalted", "salted",
+    "peeled", "trimmed", "boneless", "skinless",
     "organic", "ripe", "large", "small", "medium", "whole", "pieces", "piece",
 })
 _STOPWORDS: frozenset[str] = frozenset({"and", "or", "of", "the", "a", "an", "with", "in"})
@@ -344,10 +348,14 @@ def _has_fts(conn: sqlite3.Connection) -> bool:
 def lookup_candidates(name_en: str, technique: str = "", limit: int = 8) -> list[UsdaFood]:
     """Return up to ``limit`` USDA foods ranked by tier, then by description length.
 
-    Tiers: (1) match + a cooked-form keyword for ``technique``; (2) match + any
-    cooked-form keyword; (3) match + not "raw"; (4) match (incl. raw); (5) relaxed
-    — drop noise words, then trailing words, then prefix-match; (6) head-noun only.
-    Duplicate ``fdc_id``s are removed while preserving tier order.
+    Tiers: (0) match + an unsalted marker, when the name asks for no-salt-added/low-sodium;
+    then either (1r) match + "raw" when the name says raw, or (1) match + a cooked-form
+    keyword for ``technique``, (2) match + any cooked-form keyword, (3) match + not "raw";
+    (4) match (incl. raw); (5) relaxed — drop noise words, then trailing words, then
+    prefix-match; (6) head-noun only. Duplicate ``fdc_id``s are removed, preserving tier order.
+
+    Tiers 0 and 1r keep the *basis* qualifiers (salt, raw/cooked) at the top of the shortlist;
+    Stage 4 enforces them deterministically afterwards via ``src.nutrition.qualifiers``.
     """
     toks = _tokens(name_en)
     if not toks:
@@ -394,10 +402,20 @@ def lookup_candidates(name_en: str, technique: str = "", limit: int = 8) -> list
                 return []
 
         tech_kw = list(TECHNIQUE_TO_USDA_KEYWORDS.get(technique, ())) if technique else []
-        if tech_kw:
-            _extend(_query(toks, like_any=tech_kw))                   # 1
-        _extend(_query(toks, like_any=list(COOKED_KEYWORDS)))         # 2
-        _extend(_query(toks, not_like="raw"))                         # 3
+        # An ingredient's stated grams are the weight as bought/added. When the name says
+        # "raw", the cooked-form tiers below would actively rank the wrong basis first.
+        wants_raw = qualifiers.state_polarity(name_en) == "raw"
+        wants_unsalted = qualifiers.salt_polarity(name_en) == "unsalted"
+
+        if wants_unsalted:                                            # 0 — salt-qualified
+            _extend(_query(toks, like_any=list(qualifiers.UNSALTED_LIKE)))
+        if wants_raw:
+            _extend(_query(toks, like_any=["raw"]))                   # 1r — keep the raw basis
+        else:
+            if tech_kw:
+                _extend(_query(toks, like_any=tech_kw))               # 1
+            _extend(_query(toks, like_any=list(COOKED_KEYWORDS)))     # 2
+            _extend(_query(toks, not_like="raw"))                     # 3
         _extend(_query(toks))                                         # 4
         if len(collected) < limit:                                    # 5 — relaxed
             core = [t for t in toks if t not in _NOISE_WORDS] or toks[:]

@@ -10,9 +10,23 @@ grams; the recipe always serves 2) and, for each ingredient, a shortlist of USDA
 Central foods with their per-100 g values.
 
 For each ingredient:
-  1. Pick the `fdc_id` of the candidate that best matches the *real* ingredient AND its
-     cooking state — prefer a cooked form if the recipe cooks it; prefer a generic single
-     food over a branded product; pick "raw" only if the ingredient is genuinely used raw.
+  1. Pick the `fdc_id` of the candidate that best matches the *real* ingredient. Prefer a
+     generic single food over a branded product. Two qualifiers are BINDING, because each
+     one changes the per-100 g basis and would silently distort the whole panel:
+
+     * COOKING STATE — an ingredient's gram weight is the weight as BOUGHT AND ADDED, not
+       the weight it ends up as. If the ingredient is added uncooked (and the pan does the
+       cooking), pick the RAW record even though the finished dish is cooked. Pick a cooked
+       record only when the ingredient itself is already cooked when measured ("cooked
+       quinoa", "shredded rotisserie chicken"). 340 g of raw ground turkey is NOT 340 g of
+       browned crumbles — the cooked record is ~40% denser per gram.
+
+     * SALT — if the ingredient says "no-salt-added", "low-sodium", "without salt" or
+       "unsalted", you MUST pick a record that says the same. Never substitute a regular or
+       salted record, and do not assume an unmarked record is unsalted: many salted USDA
+       foods carry no salt word at all. If no candidate is explicitly unsalted, set
+       `fdc_id` to null and estimate instead.
+
   2. ONLY if no candidate is a reasonable match, set `fdc_id` to null and fill
      `estimate_per_100g` with your best per-100 g estimate of the core nutrients.
   3. Set `fdc_description` to the chosen food's description; add a one-clause `note` only

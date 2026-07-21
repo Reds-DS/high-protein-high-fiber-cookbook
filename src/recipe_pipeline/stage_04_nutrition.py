@@ -18,7 +18,7 @@ from src.llm.output_schemas import NutritionOutput
 from src.llm.prompts import nutrition as nutrition_prompts
 from src.models.nutrition import NutritionInfo
 from src.models.recipe import RecipeDraft
-from src.nutrition import usda_loader
+from src.nutrition import qualifiers, usda_loader
 
 SERVINGS = 2
 CANDIDATES_PER_INGREDIENT = 8
@@ -52,6 +52,83 @@ _WARN_IF_PARTIAL = _CORE_FIELDS | {"saturated_fat_g", "cholesterol_mg", "potassi
 
 def _per100_from_food(food: usda_loader.UsdaFood) -> dict[str, float | None]:
     return {usda_attr: getattr(food, usda_attr) for _, usda_attr in _NUTRIENT_MAP}
+
+
+def _reject_reason(
+    ing, food: usda_loader.UsdaFood, shortlist: list[usda_loader.UsdaFood]
+) -> str | None:
+    """Why ``food`` must not be used for ``ing``, else None. See src/nutrition/qualifiers.py."""
+    return qualifiers.mismatch_reason(
+        request_name=f"{ing.name} {ing.canonical_name or ''}",
+        request_preparation=getattr(ing, "preparation", None),
+        candidate_description=food.description,
+        candidate_sodium_mg=food.sodium_mg,
+        unsalted_alternative_exists=any(
+            qualifiers.salt_polarity(c.description) == "unsalted" for c in shortlist
+        ),
+    )
+
+
+def _enforce_qualifiers(
+    ing, food: usda_loader.UsdaFood, shortlist: list[usda_loader.UsdaFood]
+) -> tuple[usda_loader.UsdaFood, str | None]:
+    """Deterministic backstop on the LLM's pick.
+
+    A salt or raw/cooked qualifier changes the per-100 g basis, so a mismatched pick is
+    silently wrong rather than approximately right. Substitute the best candidate that does
+    satisfy the qualifier; if none does, keep the pick (zeroing the ingredient would be
+    worse) and return a warning naming the distortion.
+    """
+    reason = _reject_reason(ing, food, shortlist)
+    if reason is None:
+        return food, None
+
+    for cand in shortlist:
+        if cand.fdc_id != food.fdc_id and _reject_reason(ing, cand, shortlist) is None:
+            return cand, (
+                f"'{ing.name}': {reason} — switched from [{food.fdc_id}] {food.description} "
+                f"to [{cand.fdc_id}] {cand.description}."
+            )
+
+    return food, (
+        f"'{ing.name}': {reason}. No candidate in the USDA shortlist satisfies it, so "
+        f"[{food.fdc_id}] {food.description} was kept — treat this ingredient's "
+        f"contribution as an over-statement."
+    )
+
+
+# A NULL here is summed as zero (see the per-serving compute below), so an otherwise-fine
+# match that simply wasn't assayed for fiber silently erases it — USDA records 34.4 g
+# fiber/100 g for chia, but the Foundation record for it carries no fiber value at all.
+_COMPLETENESS_FIELDS: tuple[str, ...] = ("fiber_g", "protein_g", "calories_kcal")
+
+
+def _prefer_complete(
+    ing, food: usda_loader.UsdaFood, shortlist: list[usda_loader.UsdaFood]
+) -> tuple[usda_loader.UsdaFood, str | None]:
+    """Swap an incomplete match for an equally valid one that carries the missing nutrient.
+
+    Only considers candidates the qualifier guard already accepts, and takes the first —
+    the shortlist is relevance-ranked, so that is the closest complete match.
+    """
+    missing = [f for f in _COMPLETENESS_FIELDS if getattr(food, f) is None]
+    if not missing:
+        return food, None
+
+    for cand in shortlist:
+        if cand.fdc_id == food.fdc_id:
+            continue
+        if any(getattr(cand, f) is None for f in missing):
+            continue
+        if _reject_reason(ing, cand, shortlist) is not None:
+            continue
+        return cand, (
+            f"'{ing.name}': [{food.fdc_id}] {food.description} has no USDA value for "
+            f"{', '.join(missing)} (which would be summed as zero) — switched to "
+            f"[{cand.fdc_id}] {cand.description}."
+        )
+
+    return food, None
 
 
 def _per100_from_estimate(est) -> dict[str, float | None]:
@@ -152,6 +229,14 @@ def run(draft: RecipeDraft, technique: str = "") -> tuple[NutritionInfo, list[st
         alias_id = alias_ids[idx]
         fdc_id = pick.fdc_id if pick is not None else None
         food = usda_loader.fetch_by_id(int(fdc_id)) if fdc_id else None
+        if food is not None:
+            shortlist = candidates_by_name.get(ing.canonical_name, [])
+            food, qual_warning = _enforce_qualifiers(ing, food, shortlist)
+            if qual_warning:
+                warnings.append(f"Stage 4 qualifier: {qual_warning}")
+            food, complete_warning = _prefer_complete(ing, food, shortlist)
+            if complete_warning:
+                warnings.append(f"Stage 4 coverage: {complete_warning}")
         if food is not None:
             per100_list.append(_per100_from_food(food))
             object.__setattr__(ing, "fdc_id", food.fdc_id)
